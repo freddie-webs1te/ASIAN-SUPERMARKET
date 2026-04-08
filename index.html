@@ -1,1332 +1,603 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Asian Supermarket George</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=Noto+Serif+JP:wght@300;400&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --black: #0a0a0a;
-    --red: #c8293a;
-    --red-dark: #8b1a27;
-    --cream: #f5f0e8;
-    --warm-white: #faf8f4;
-    --gold: #c9a84c;
-    --gold-light: #e8c96e;
-    --text-muted: #7a7068;
-    --border: rgba(201,168,76,0.25);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--black);
-    color: var(--cream);
-    font-family: 'DM Sans', sans-serif;
-    overflow-x: hidden;
-  }
-
-  /* ─── NOISE TEXTURE OVERLAY ─── */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 9999;
-    opacity: 0.6;
-  }
-
-  /* ─── NAV ─── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.5rem 4rem;
-    background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent);
-    backdrop-filter: blur(2px);
-  }
-
-  .nav-logo {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .nav-logo .kanji {
-    font-family: 'Noto Serif JP', serif;
-    font-size: 1.6rem;
-    color: var(--gold);
-    line-height: 1;
-  }
-
-  .nav-logo .brand {
-    font-family: 'Playfair Display', serif;
-    font-size: 1rem;
-    font-weight: 400;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--cream);
-    line-height: 1.2;
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 2.5rem;
-    list-style: none;
-  }
-
-  .nav-links a {
-    text-decoration: none;
-    font-size: 0.8rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: rgba(245,240,232,0.65);
-    transition: color 0.3s;
-  }
-
-  .nav-links a:hover { color: var(--gold-light); }
-
-  .nav-cta {
-    background: var(--red);
-    color: white;
-    text-decoration: none;
-    font-size: 0.75rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    padding: 0.65rem 1.5rem;
-    border: 1px solid var(--red);
-    transition: all 0.3s;
-  }
-
-  .nav-cta:hover {
-    background: transparent;
-    border-color: var(--gold);
-    color: var(--gold);
-  }
-
-  /* ─── HERO ─── */
-  .hero {
-    min-height: 100vh;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero-bg-strip {
-    position: absolute;
-    right: 0; top: 0; bottom: 0;
-    width: 52%;
-    background: linear-gradient(135deg, #1a0a0d 0%, #2d0f14 40%, #1a0508 100%);
-    clip-path: polygon(8% 0, 100% 0, 100% 100%, 0% 100%);
-  }
-
-  /* Decorative circle */
-  .hero-circle {
-    position: absolute;
-    right: 18%;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 520px;
-    height: 520px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 40% 40%, #3d0f16, #1a0508);
-    border: 1px solid rgba(201,168,76,0.2);
-    box-shadow: 0 0 120px rgba(200,41,58,0.12), inset 0 0 80px rgba(0,0,0,0.5);
-  }
-
-  .hero-circle::before {
-    content: '';
-    position: absolute;
-    inset: 20px;
-    border-radius: 50%;
-    border: 1px solid rgba(201,168,76,0.12);
-  }
-
-  .hero-circle::after {
-    content: '';
-    position: absolute;
-    inset: 40px;
-    border-radius: 50%;
-    border: 1px dashed rgba(201,168,76,0.08);
-  }
-
-  .hero-food-img {
-    position: absolute;
-    right: 8%;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 460px;
-    height: 460px;
-    border-radius: 50%;
-    object-fit: cover;
-    filter: saturate(1.1) contrast(1.05);
-    animation: float 6s ease-in-out infinite;
-  }
-
-  @keyframes float {
-    0%, 100% { transform: translateY(-50%) translateY(0); }
-    50% { transform: translateY(-50%) translateY(-14px); }
-  }
-
-  .hero-left {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 8rem 3rem 4rem 4rem;
-    position: relative;
-    z-index: 2;
-  }
-
-  .hero-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    margin-bottom: 1.8rem;
-  }
-
-  .hero-tag .line {
-    width: 32px;
-    height: 1px;
-    background: var(--gold);
-  }
-
-  .hero-tag span {
-    font-size: 0.7rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--gold);
-    font-weight: 500;
-  }
-
-  .hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(3.5rem, 5.5vw, 6.5rem);
-    line-height: 0.95;
-    font-weight: 900;
-    margin-bottom: 1.2rem;
-    letter-spacing: -0.02em;
-  }
-
-  .hero h1 em {
-    font-style: italic;
-    color: var(--red);
-    display: block;
-  }
-
-  .hero h1 .outline {
-    -webkit-text-stroke: 1.5px var(--cream);
-    color: transparent;
-    display: block;
-  }
-
-  .hero-kanji-deco {
-    font-family: 'Noto Serif JP', serif;
-    font-size: 5rem;
-    color: rgba(201,168,76,0.08);
-    position: absolute;
-    right: 55%;
-    top: 20%;
-    writing-mode: vertical-rl;
-    letter-spacing: 0.3em;
-    pointer-events: none;
-    user-select: none;
-  }
-
-  .hero-desc {
-    font-size: 1rem;
-    line-height: 1.7;
-    color: rgba(245,240,232,0.65);
-    max-width: 380px;
-    margin-bottom: 2.5rem;
-  }
-
-  .hero-actions {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    margin-bottom: 3rem;
-  }
-
-  .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    background: var(--red);
-    color: white;
-    text-decoration: none;
-    font-size: 0.8rem;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 1rem 2rem;
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.3s;
-  }
-
-  .btn-primary::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--red-dark);
-    transform: translateX(-101%);
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .btn-primary:hover::before { transform: translateX(0); }
-  .btn-primary:hover { transform: translateY(-2px); }
-  .btn-primary span { position: relative; z-index: 1; }
-
-  .btn-ghost {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--cream);
-    text-decoration: none;
-    font-size: 0.8rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    border-bottom: 1px solid rgba(245,240,232,0.3);
-    padding-bottom: 2px;
-    transition: border-color 0.3s, color 0.3s;
-  }
-
-  .btn-ghost:hover { color: var(--gold); border-color: var(--gold); }
-
-  .hero-stats {
-    display: flex;
-    gap: 2.5rem;
-  }
-
-  .stat-item {}
-
-  .stat-num {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--gold);
-    line-height: 1;
-  }
-
-  .stat-label {
-    font-size: 0.7rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-top: 0.25rem;
-  }
-
-  .hero-badge {
-    position: absolute;
-    right: 54%;
-    bottom: 15%;
-    background: rgba(10,10,10,0.9);
-    border: 1px solid var(--border);
-    padding: 1rem 1.2rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    backdrop-filter: blur(10px);
-    animation: fadeSlideUp 1s ease 0.8s both;
-  }
-
-  @keyframes fadeSlideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .badge-stars {
-    color: var(--gold);
-    font-size: 0.85rem;
-    letter-spacing: 2px;
-  }
-
-  .badge-text .top { font-size: 0.75rem; color: var(--gold); font-weight: 500; }
-  .badge-text .bot { font-size: 0.65rem; color: var(--text-muted); letter-spacing: 0.1em; }
-
-  /* ─── MARQUEE ─── */
-  .marquee-wrap {
-    background: var(--red);
-    padding: 0.8rem 0;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .marquee-track {
-    display: flex;
-    gap: 0;
-    animation: marquee 22s linear infinite;
-    white-space: nowrap;
-  }
-
-  .marquee-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 1.5rem;
-    padding: 0 2rem;
-    font-size: 0.7rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    font-weight: 500;
-    color: rgba(255,255,255,0.9);
-  }
-
-  .marquee-dot {
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.5);
-    display: inline-block;
-  }
-
-  @keyframes marquee {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
-
-  /* ─── MENU SECTION ─── */
-  .section {
-    padding: 7rem 4rem;
-    position: relative;
-  }
-
-  .section-header {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    margin-bottom: 4rem;
-  }
-
-  .section-tag {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    margin-bottom: 0.8rem;
-  }
-
-  .section-tag .line { width: 24px; height: 1px; background: var(--gold); }
-  .section-tag span {
-    font-size: 0.65rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--gold);
-  }
-
-  .section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2.2rem, 4vw, 3.5rem);
-    font-weight: 900;
-    line-height: 1.05;
-    letter-spacing: -0.02em;
-  }
-
-  .section-title em { font-style: italic; color: var(--red); }
-
-  .menu-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5px;
-    background: var(--border);
-  }
-
-  .menu-card {
-    background: #0f0f0f;
-    padding: 2.5rem 2rem;
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
-    transition: background 0.4s;
-  }
-
-  .menu-card:hover { background: #141010; }
-
-  .menu-card::before {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0;
-    width: 100%;
-    height: 2px;
-    background: var(--red);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .menu-card:hover::before { transform: scaleX(1); }
-
-  .menu-card-emoji {
-    font-size: 3rem;
-    margin-bottom: 1.2rem;
-    display: block;
-  }
-
-  .menu-card-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.4rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-  }
-
-  .menu-card-desc {
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    line-height: 1.65;
-    margin-bottom: 1.5rem;
-  }
-
-  .menu-card-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .menu-price {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--gold);
-  }
-
-  .menu-price small {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    font-weight: 400;
-  }
-
-  .menu-arrow {
-    width: 36px;
-    height: 36px;
-    border: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--gold);
-    font-size: 1rem;
-    transition: all 0.3s;
-  }
-
-  .menu-card:hover .menu-arrow {
-    background: var(--red);
-    border-color: var(--red);
-    color: white;
-  }
-
-  /* ─── ABOUT / VIBE SECTION ─── */
-  .about-section {
-    padding: 7rem 4rem;
-    background: linear-gradient(135deg, #0d0508 0%, #0a0a0a 60%);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6rem;
-    align-items: center;
-  }
-
-  .about-img-stack {
-    position: relative;
-    height: 520px;
-  }
-
-  .about-img-main {
-    position: absolute;
-    top: 0; left: 0;
-    width: 80%;
-    height: 80%;
-    background: linear-gradient(135deg, #2d0f14, #1a0508);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 8rem;
-    border: 1px solid var(--border);
-    overflow: hidden;
-  }
-
-  .about-img-accent {
-    position: absolute;
-    bottom: 0; right: 0;
-    width: 55%;
-    height: 55%;
-    background: #111;
-    border: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 5rem;
-    padding: 1.5rem;
-  }
-
-  .about-label {
-    position: absolute;
-    top: 78%;
-    left: 2%;
-    background: var(--red);
-    padding: 0.6rem 1rem;
-    font-size: 0.65rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    font-weight: 500;
-  }
-
-  .about-text h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2rem, 3vw, 3rem);
-    line-height: 1.1;
-    font-weight: 900;
-    letter-spacing: -0.02em;
-    margin-bottom: 1.5rem;
-  }
-
-  .about-text h2 em { font-style: italic; color: var(--red); }
-
-  .about-text p {
-    font-size: 0.9rem;
-    line-height: 1.8;
-    color: rgba(245,240,232,0.65);
-    margin-bottom: 1.2rem;
-  }
-
-  .about-features {
-    margin-top: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .feature-row {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    border: 1px solid var(--border);
-    transition: border-color 0.3s;
-  }
-
-  .feature-row:hover { border-color: rgba(201,168,76,0.5); }
-
-  .feature-icon {
-    font-size: 1.4rem;
-    width: 42px;
-    text-align: center;
-  }
-
-  .feature-info strong {
-    display: block;
-    font-size: 0.85rem;
-    font-weight: 500;
-    margin-bottom: 0.2rem;
-  }
-
-  .feature-info span {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-  }
-
-  /* ─── REVIEWS ─── */
-  .reviews-section {
-    padding: 7rem 4rem;
-    background: #080808;
-  }
-
-  .reviews-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    background: var(--border);
-    margin-top: 4rem;
-  }
-
-  .review-card {
-    background: #0a0a0a;
-    padding: 2rem;
-    position: relative;
-  }
-
-  .review-card::before {
-    content: '"';
-    font-family: 'Playfair Display', serif;
-    font-size: 6rem;
-    line-height: 1;
-    color: var(--red);
-    opacity: 0.12;
-    position: absolute;
-    top: 0.5rem;
-    left: 1.5rem;
-    font-style: italic;
-  }
-
-  .review-stars {
-    color: var(--gold);
-    font-size: 0.8rem;
-    letter-spacing: 3px;
-    margin-bottom: 1rem;
-  }
-
-  .review-text {
-    font-size: 0.88rem;
-    line-height: 1.7;
-    color: rgba(245,240,232,0.8);
-    margin-bottom: 1.5rem;
-    font-style: italic;
-    font-family: 'Playfair Display', serif;
-    font-weight: 400;
-  }
-
-  .reviewer {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    border-top: 1px solid var(--border);
-    padding-top: 1rem;
-  }
-
-  .reviewer-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: var(--red-dark);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 600;
-    flex-shrink: 0;
-  }
-
-  .reviewer-name {
-    font-size: 0.78rem;
-    font-weight: 500;
-    color: var(--cream);
-  }
-
-  .reviewer-meta {
-    font-size: 0.65rem;
-    color: var(--text-muted);
-    letter-spacing: 0.05em;
-    margin-top: 0.15rem;
-  }
-
-  /* ─── CONTACT ─── */
-  .contact-section {
-    padding: 7rem 4rem;
-    background: linear-gradient(180deg, #0a0a0a 0%, #0d0508 100%);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6rem;
-    align-items: center;
-  }
-
-  .contact-info h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2rem, 3.5vw, 3.2rem);
-    line-height: 1.1;
-    font-weight: 900;
-    letter-spacing: -0.02em;
-    margin-bottom: 2rem;
-  }
-
-  .contact-info h2 em { color: var(--red); font-style: italic; }
-
-  .contact-details {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    margin-bottom: 2.5rem;
-  }
-
-  .contact-item {
-    display: flex;
-    gap: 1.2rem;
-    align-items: flex-start;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .contact-item:last-child { border: none; }
-
-  .contact-item-icon {
-    font-size: 1.2rem;
-    margin-top: 0.1rem;
-    flex-shrink: 0;
-  }
-
-  .contact-item-label {
-    font-size: 0.65rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 0.3rem;
-  }
-
-  .contact-item-value {
-    font-size: 0.92rem;
-    color: var(--cream);
-    line-height: 1.5;
-  }
-
-  .map-placeholder {
-    height: 420px;
-    background: #0f0a0c;
-    border: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 1.5rem;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .map-placeholder::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: 
-      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(201,168,76,0.04) 39px, rgba(201,168,76,0.04) 40px),
-      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(201,168,76,0.04) 39px, rgba(201,168,76,0.04) 40px);
-  }
-
-  .map-pin {
-    font-size: 3rem;
-    animation: pulse 2.5s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.15); }
-  }
-
-  .map-placeholder p {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    letter-spacing: 0.1em;
-    text-align: center;
-  }
-
-  .map-placeholder a {
-    font-size: 0.75rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--red);
-    text-decoration: none;
-    border-bottom: 1px solid var(--red);
-    padding-bottom: 2px;
-  }
-
-  /* ─── FOOTER ─── */
-  footer {
-    background: #050505;
-    padding: 3rem 4rem 2rem;
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  footer .logo-area .kanji {
-    font-family: 'Noto Serif JP', serif;
-    font-size: 1.8rem;
-    color: var(--gold);
-    display: block;
-    margin-bottom: 0.2rem;
-  }
-
-  footer .logo-area .tagline {
-    font-size: 0.65rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-  }
-
-  footer .copy {
-    font-size: 0.72rem;
-    color: var(--text-muted);
-    text-align: center;
-  }
-
-  footer .footer-links {
-    display: flex;
-    gap: 2rem;
-    list-style: none;
-  }
-
-  footer .footer-links a {
-    font-size: 0.7rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    text-decoration: none;
-    transition: color 0.3s;
-  }
-
-  footer .footer-links a:hover { color: var(--gold); }
-
-  /* ─── HOURS BADGE ─── */
-  .hours-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.4rem 0.9rem;
-    border: 1px solid rgba(100,200,100,0.3);
-    background: rgba(100,200,100,0.05);
-    border-radius: 2px;
-    margin-bottom: 1rem;
-  }
-
-  .hours-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #4caf50;
-    animation: blink 2s ease-in-out infinite;
-  }
-
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
-
-  .hours-badge span {
-    font-size: 0.7rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: #4caf50;
-  }
-
-  /* ─── ANIMATIONS ─── */
-  .fade-in {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.8s ease, transform 0.8s ease;
-  }
-
-  .fade-in.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* ─── RESPONSIVE ─── */
-  @media (max-width: 900px) {
-    nav { padding: 1.2rem 2rem; }
-    .nav-links { display: none; }
-    .hero { grid-template-columns: 1fr; }
-    .hero-bg-strip { width: 100%; clip-path: none; opacity: 0.3; }
-    .hero-left { padding: 8rem 2rem 4rem; }
-    .hero-food-img { display: none; }
-    .hero-circle { display: none; }
-    .hero-kanji-deco { display: none; }
-    .section { padding: 4rem 2rem; }
-    .menu-grid { grid-template-columns: 1fr; }
-    .reviews-grid { grid-template-columns: 1fr; }
-    .about-section { grid-template-columns: 1fr; gap: 3rem; padding: 4rem 2rem; }
-    .contact-section { grid-template-columns: 1fr; gap: 3rem; padding: 4rem 2rem; }
-    footer { flex-direction: column; gap: 1.5rem; text-align: center; padding: 2rem; }
-    .hero-badge { display: none; }
-    .section-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asian Supermarket - Authentic Asian Flavors</title>
+  <meta name="description" content="Your destination for authentic Asian groceries and delicious homemade cuisine. Fresh ingredients, traditional recipes, unforgettable flavors.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --primary-color: #C41E3A;
+      --primary-button-text-color: #FFFFFF;
+      --primary-button-hover-bg-color: #A01830;
+      --primary-button-hover-text-color: #FFFFFF;
+      --secondary-button-bg-color: #2C3E50;
+      --secondary-button-text-color: #FFFFFF;
+      --secondary-button-hover-bg-color: #1A252F;
+      --secondary-button-hover-text-color: #FFFFFF;
+      --accent-color: #D4AF37;
+      --accent2-color: #00A878;
+      --accent3-color: #FF6B35;
+      --accent4-color: #4A5568;
+      --dark-text-color: #1A1A1A;
+      --gray-text-color: #6B7280;
+      --light-text-color: #FFFFFF;
+      --dark-border-color: #374151;
+      --light-border-color: #E5E7EB;
+      --dark-background-color: #1A1A1A;
+      --light-background-color: #FDF5F6;
+      --medium-background-color: #F9EBED;
+      --button-padding-x: 32px;
+      --button-padding-y: 14px;
+      --font-family-body: Outfit;
+      --font-family-heading: Urbanist;
+      --button-rounded-radius: 8px;
+    }
+  </style>
 </head>
-<body>
+<body class="font-[Outfit] antialiased">
 
-<!-- NAV -->
-<nav>
-  <div class="nav-logo">
-    <span class="kanji">亜</span>
-    <div class="brand">Asian<br>Supermarket</div>
-  </div>
-  <ul class="nav-links">
-    <li><a href="#menu">Menu</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#reviews">Reviews</a></li>
-    <li><a href="#contact">Find Us</a></li>
-  </ul>
-  <a href="tel:0448718672" class="nav-cta">Call Us</a>
-</nav>
+  <!-- ========== HEADER ========== -->
+  <header id="global-header">
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-20">
+          <!-- Logo -->
+          <a href="/" class="flex items-center" data-logo="">
+            <img src="https://assets.ls-assets.com/uploads/616e1aa4-18d3-4015-bdb5-5b4943110f90/26b53c06-e786-4712-a3a6-74d2eb322890.png?w=768" alt="Asian Supermarket" class="h-14 w-auto">
+          </a>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-bg-strip"></div>
-  <div class="hero-circle"></div>
+          <!-- Desktop Navigation -->
+          <div class="hidden lg:flex items-center space-x-8">
+            <a href="/restaurant-menu" class="text-[var(--dark-text-color)] hover:text-[var(--primary-color)] font-medium transition-colors duration-300">Restaurant Menu</a>
+            <a href="/supermarket" class="text-[var(--dark-text-color)] hover:text-[var(--primary-color)] font-medium transition-colors duration-300">Supermarket</a>
+            <a href="/specials" class="text-[var(--dark-text-color)] hover:text-[var(--primary-color)] font-medium transition-colors duration-300">Weekly Specials</a>
+            <a href="/catering" class="text-[var(--dark-text-color)] hover:text-[var(--primary-color)] font-medium transition-colors duration-300">Catering Services</a>
+            <a href="/location" class="text-[var(--dark-text-color)] hover:text-[var(--primary-color)] font-medium transition-colors duration-300">Location & Hours</a>
+            <a href="/order-online" class="bg-[var(--primary-color)] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[var(--primary-button-hover-bg-color)] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">Order Your Meal</a>
+          </div>
 
-  <!-- Floating sushi plate (emoji-based, no external image needed) -->
-  <div style="position:absolute;right:8%;top:50%;transform:translateY(-50%);width:460px;height:460px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#2d0f14,#0d0306);display:flex;align-items:center;justify-content:center;font-size:13rem;box-shadow:0 40px 100px rgba(200,41,58,0.15);animation:float 6s ease-in-out infinite;z-index:3;border:1px solid rgba(201,168,76,0.15);">🍣</div>
-
-  <div class="hero-left">
-    <div class="hours-badge">
-      <div class="hours-dot"></div>
-      <span>Open Now · Closes 8pm</span>
-    </div>
-
-    <div class="hero-tag">
-      <div class="line"></div>
-      <span>George, Western Cape</span>
-    </div>
-
-    <h1>
-      <span>Taste of</span>
-      <em>Asia</em>
-      <span class="outline">In George</span>
-    </h1>
-
-    <div class="hero-kanji-deco">亜細亜</div>
-
-    <p class="hero-desc">
-      Authentic sushi, fresh dim sum, hand-rolled dumplings & an entire world of Asian pantry staples — all under one roof in Bodorp.
-    </p>
-
-    <div class="hero-actions">
-      <a href="#menu" class="btn-primary"><span>Explore Menu</span><span>→</span></a>
-      <a href="#contact" class="btn-ghost">Find us ↗</a>
-    </div>
-
-    <div class="hero-stats">
-      <div class="stat-item">
-        <div class="stat-num">4.5★</div>
-        <div class="stat-label">Google Rating</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num">500+</div>
-        <div class="stat-label">Reviews</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num">R100</div>
-        <div class="stat-label">From Only</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="hero-badge">
-    <div class="badge-stars">★★★★★</div>
-    <div class="badge-text">
-      <div class="top">Best Sushi in George</div>
-      <div class="bot">As rated by locals</div>
-    </div>
-  </div>
-</section>
-
-<!-- MARQUEE -->
-<div class="marquee-wrap">
-  <div class="marquee-track">
-    <span class="marquee-item">Fresh Sushi Daily <span class="marquee-dot"></span></span>
-    <span class="marquee-item">Dim Sum & Dumplings <span class="marquee-dot"></span></span>
-    <span class="marquee-item">Asian Pantry Essentials <span class="marquee-dot"></span></span>
-    <span class="marquee-item">Takeaway & Dine In <span class="marquee-dot"></span></span>
-    <span class="marquee-item">45 Wellington St, George <span class="marquee-dot"></span></span>
-    <span class="marquee-item">Open Until 8pm Daily <span class="marquee-dot"></span></span>
-    <span class="marquee-item">Fresh Sushi Daily <span class="marquee-dot"></span></span>
-    <span class="marquee-item">Dim Sum & Dumplings <span class="marquee-dot"></span></span>
-    <span class="marquee-item">Asian Pantry Essentials <span class="marquee-dot"></span></span>
-    <span class="marquee-item">Takeaway & Dine In <span class="marquee-dot"></span></span>
-    <span class="marquee-item">45 Wellington St, George <span class="marquee-dot"></span></span>
-    <span class="marquee-item">Open Until 8pm Daily <span class="marquee-dot"></span></span>
-  </div>
-</div>
-
-<!-- MENU -->
-<section class="section" id="menu">
-  <div class="section-header">
-    <div>
-      <div class="section-tag"><div class="line"></div><span>Our Specialties</span></div>
-      <h2 class="section-title">What We <em>Serve</em></h2>
-    </div>
-    <a href="#contact" class="btn-ghost">View Full Menu ↗</a>
-  </div>
-
-  <div class="menu-grid">
-    <div class="menu-card fade-in">
-      <span class="menu-card-emoji">🍣</span>
-      <h3 class="menu-card-name">Sushi & Rolls</h3>
-      <p class="menu-card-desc">Fresh, big-bite sushi rolls made daily. Our tempura prawn fashion sandwiches are crowd favourites. Best in George — locals agree.</p>
-      <div class="menu-card-footer">
-        <div class="menu-price">From R100 <small>/ combo</small></div>
-        <div class="menu-arrow">→</div>
-      </div>
-    </div>
-
-    <div class="menu-card fade-in" style="transition-delay:0.1s">
-      <span class="menu-card-emoji">🥟</span>
-      <h3 class="menu-card-name">Dim Sum & Dumplings</h3>
-      <p class="menu-card-desc">Steamed or fried, take them home or eat in. Best dim sum in town — and a huge variety of frozen dumplings to cook at home.</p>
-      <div class="menu-card-footer">
-        <div class="menu-price">From R80 <small>/ basket</small></div>
-        <div class="menu-arrow">→</div>
-      </div>
-    </div>
-
-    <div class="menu-card fade-in" style="transition-delay:0.2s">
-      <span class="menu-card-emoji">🍜</span>
-      <h3 class="menu-card-name">Noodles & Fried Rice</h3>
-      <p class="menu-card-desc">Hot, comforting takeaway at unbeatable prices. Fried rice, noodle dishes and more — great value for money every time.</p>
-      <div class="menu-card-footer">
-        <div class="menu-price">From R70 <small>/ plate</small></div>
-        <div class="menu-arrow">→</div>
-      </div>
-    </div>
-
-    <div class="menu-card fade-in" style="transition-delay:0.1s">
-      <span class="menu-card-emoji">🛒</span>
-      <h3 class="menu-card-name">Asian Grocery</h3>
-      <p class="menu-card-desc">Miss the flavours of SE Asia? Noodles, sauces, snacks, drinks and exotic pantry staples — everything you'd find in Bangkok's markets.</p>
-      <div class="menu-card-footer">
-        <div class="menu-price">Huge Range</div>
-        <div class="menu-arrow">→</div>
-      </div>
-    </div>
-
-    <div class="menu-card fade-in" style="transition-delay:0.2s">
-      <span class="menu-card-emoji">🍡</span>
-      <h3 class="menu-card-name">Snacks & Sweets</h3>
-      <p class="menu-card-desc">Unique Asian candies, mochi, pocky, chips and drinks you won't find anywhere else in the Garden Route. Perfect for gifting.</p>
-      <div class="menu-card-footer">
-        <div class="menu-price">From R15</div>
-        <div class="menu-arrow">→</div>
-      </div>
-    </div>
-
-    <div class="menu-card fade-in" style="transition-delay:0.3s">
-      <span class="menu-card-emoji">🎏</span>
-      <h3 class="menu-card-name">Asian Trinkets</h3>
-      <p class="menu-card-desc">Decor, kitchenware, chopsticks, and cultural gifts. A little treasure hunt every visit — something new always on the shelves.</p>
-      <div class="menu-card-footer">
-        <div class="menu-price">Various</div>
-        <div class="menu-arrow">→</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ABOUT -->
-<section class="about-section" id="about">
-  <div class="about-img-stack fade-in">
-    <div class="about-img-main">🏮</div>
-    <div class="about-img-accent">🥢</div>
-    <div class="about-label">Hidden Gem · George</div>
-  </div>
-  <div class="about-text fade-in" style="transition-delay:0.15s">
-    <div class="section-tag"><div class="line"></div><span>Our Story</span></div>
-    <h2>A <em>Hidden Gem</em><br>in the Heart of George</h2>
-    <p>
-      Tucked away on Wellington Street in Bodorp, Asian Supermarket George is where the Garden Route goes to find something extraordinary. Whether you're a seasoned traveller missing the bold flavours of Southeast Asia or a curious first-timer, this is your destination.
-    </p>
-    <p>
-      From hand-made sushi to authentic imported pantry staples, every corner of our store is stocked with quality and passion. It's not just a supermarket — it's a taste journey.
-    </p>
-    <div class="about-features">
-      <div class="feature-row">
-        <div class="feature-icon">🍱</div>
-        <div class="feature-info">
-          <strong>Dine In & Takeaway</strong>
-          <span>Eat fresh on-site or grab quality meals to go</span>
+          <!-- Mobile Menu Button -->
+          <button data-landingsite-mobile-menu-toggle="" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Toggle menu">
+            <svg class="w-6 h-6 text-[var(--dark-text-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
         </div>
       </div>
-      <div class="feature-row">
-        <div class="feature-icon">🌏</div>
-        <div class="feature-info">
-          <strong>Authentic Asian Imports</strong>
-          <span>Products sourced direct from Asia — the real deal</span>
+
+      <!-- Mobile Menu -->
+      <div data-landingsite-mobile-menu="" class="hidden lg:hidden bg-white border-t border-gray-100 shadow-lg">
+        <div class="px-4 py-4 space-y-3">
+          <a href="/restaurant-menu" class="block text-[var(--dark-text-color)] hover:text-[var(--primary-color)] font-medium py-2 transition-colors">Restaurant Menu</a>
+          <a href="/supermarket" class="block text-[var(--dark-text-color)] hover:text-[var(--primary-color)] font-medium py-2 transition-colors">Supermarket</a>
+          <a href="/specials" class="block text-[var(--dark-text-color)] hover:text-[var(--primary-color)] font-medium py-2 transition-colors">Weekly Specials</a>
+          <a href="/catering" class="block text-[var(--dark-text-color)] hover:text-[var(--primary-color)] font-medium py-2 transition-colors">Catering Services</a>
+          <a href="/location" class="block text-[var(--dark-text-color)] hover:text-[var(--primary-color)] font-medium py-2 transition-colors">Location & Hours</a>
+          <a href="/order-online" class="block bg-[var(--primary-color)] text-white text-center px-6 py-3 rounded-lg font-semibold hover:bg-[var(--primary-button-hover-bg-color)] transition-all mt-4">Order Your Meal</a>
         </div>
       </div>
-      <div class="feature-row">
-        <div class="feature-icon">💛</div>
-        <div class="feature-info">
-          <strong>Friendly Staff & Great Prices</strong>
-          <span>Welcoming service and incredible value every visit</span>
+    </nav>
+  </header>
+
+  <!-- ========== HERO SECTION ========== -->
+  <section class="relative min-h-[90vh] flex items-center">
+    <div class="absolute inset-0">
+      <img src="https://assets.ls-assets.com/provider/istock/2190821706.jpg?w=1920" alt="Authentic Asian cuisine spread" class="w-full h-full object-cover">
+      <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent"></div>
+    </div>
+
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div class="max-w-2xl">
+        <span class="inline-block bg-[var(--accent-color)] text-[var(--dark-text-color)] px-4 py-2 rounded-full text-sm font-semibold mb-6 animate-bounce">Authentic Asian Flavors</span>
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+          Taste the <span class="text-[var(--accent-color)]">Authentic</span> Flavors of Asia
+        </h1>
+        <p class="text-xl text-gray-200 mb-8 leading-relaxed">
+          Experience the finest selection of fresh Asian groceries and mouthwatering dishes prepared with traditional recipes passed down through generations.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="/restaurant-menu" class="inline-flex items-center justify-center bg-[var(--primary-color)] text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-[var(--primary-button-hover-bg-color)] transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1">
+            <span>Explore Our Menu</span>
+            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+            </svg>
+          </a>
+          <a href="/supermarket" class="inline-flex items-center justify-center bg-white/10 backdrop-blur-sm text-white border-2 border-white/30 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white/20 transition-all duration-300">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+            <span>Shop Groceries</span>
+          </a>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- REVIEWS -->
-<section class="reviews-section" id="reviews">
-  <div class="section-header">
-    <div>
-      <div class="section-tag"><div class="line"></div><span>Google Reviews</span></div>
-      <h2 class="section-title">What George <em>Says</em></h2>
-    </div>
-    <div style="text-align:right">
-      <div style="font-family:'Playfair Display',serif;font-size:3rem;font-weight:900;color:var(--gold);line-height:1">4.5★</div>
-      <div style="font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-muted);margin-top:0.25rem">500+ Reviews</div>
-    </div>
-  </div>
-
-  <div class="reviews-grid">
-    <div class="review-card fade-in">
-      <div class="review-stars">★★★★★</div>
-      <p class="review-text">Probably the best sushi in town. Was so surprised — and the combos are epic!</p>
-      <div class="reviewer">
-        <div class="reviewer-avatar">VM</div>
-        <div>
-          <div class="reviewer-name">Vilje Maritz</div>
-          <div class="reviewer-meta">Local Guide · 8 months ago</div>
+        <div class="mt-12 flex items-center gap-8">
+          <div class="text-center">
+            <p class="text-3xl font-bold text-[var(--accent-color)]">500+</p>
+            <p class="text-gray-300 text-sm">Products</p>
+          </div>
+          <div class="w-px h-12 bg-white/30"></div>
+          <div class="text-center">
+            <p class="text-3xl font-bold text-[var(--accent-color)]">50+</p>
+            <p class="text-gray-300 text-sm">Authentic Dishes</p>
+          </div>
+          <div class="w-px h-12 bg-white/30"></div>
+          <div class="text-center">
+            <p class="text-3xl font-bold text-[var(--accent-color)]">4.8★</p>
+            <p class="text-gray-300 text-sm">Customer Rating</p>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="review-card fade-in" style="transition-delay:0.1s">
-      <div class="review-stars">★★★★★</div>
-      <p class="review-text">A hidden gem! Excellent variety of authentic Asian ingredients at great prices. The staff are friendly and helpful. Highly recommended.</p>
-      <div class="reviewer">
-        <div class="reviewer-avatar">HC</div>
-        <div>
-          <div class="reviewer-name">Hendrik Combrinck</div>
-          <div class="reviewer-meta">Local Guide · 113 reviews · 3 months ago</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="review-card fade-in" style="transition-delay:0.2s">
-      <div class="review-stars">★★★★★</div>
-      <p class="review-text">Best dim sum in town! Great food, very nice selection of Asian products. Would definitely go again!</p>
-      <div class="reviewer">
-        <div class="reviewer-avatar">MA</div>
-        <div>
-          <div class="reviewer-name">Melvin Alihusain</div>
-          <div class="reviewer-meta">5 reviews · 3 months ago</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="review-card fade-in">
-      <div class="review-stars">★★★★★</div>
-      <p class="review-text">If you miss the food from SE Asia, it's all here. Great place for noodles, sweets and food. Takeout menu is cheap and great value.</p>
-      <div class="reviewer">
-        <div class="reviewer-avatar">JV</div>
-        <div>
-          <div class="reviewer-name">Johan Van Tonder</div>
-          <div class="reviewer-meta">Local Guide · 55 reviews · 4 months ago</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="review-card fade-in" style="transition-delay:0.1s">
-      <div class="review-stars">★★★★★</div>
-      <p class="review-text">The best Asian market in George. Tons of dumplings to buy at home, lots of Asian snacks and drinks. I go here often and highly recommend it.</p>
-      <div class="reviewer">
-        <div class="reviewer-avatar">ML</div>
-        <div>
-          <div class="reviewer-name">M. Louw</div>
-          <div class="reviewer-meta">Local Guide · 31 reviews · 4 months ago</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="review-card fade-in" style="transition-delay:0.2s">
-      <div class="review-stars">★★★★★</div>
-      <p class="review-text">Great, fresh sushi! Delicious tempura prawn fashion sandwiches! We will definitely be back soon!</p>
-      <div class="reviewer">
-        <div class="reviewer-avatar">HF</div>
-        <div>
-          <div class="reviewer-name">Heila Fourie</div>
-          <div class="reviewer-meta">Local Guide · 19 reviews · 2 months ago</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section class="contact-section" id="contact">
-  <div class="contact-info fade-in">
-    <div class="section-tag"><div class="line"></div><span>Visit Us</span></div>
-    <h2>Come <em>Find</em><br>Your Favourites</h2>
-
-    <div class="contact-details">
-      <div class="contact-item">
-        <div class="contact-item-icon">📍</div>
-        <div>
-          <div class="contact-item-label">Address</div>
-          <div class="contact-item-value">45 Wellington Street<br>Bodorp, George, 6529<br>Western Cape, South Africa</div>
-        </div>
-      </div>
-
-      <div class="contact-item">
-        <div class="contact-item-icon">🕐</div>
-        <div>
-          <div class="contact-item-label">Trading Hours</div>
-          <div class="contact-item-value">Monday – Sunday<br>6:00 AM – 8:00 PM</div>
-        </div>
-      </div>
-
-      <div class="contact-item">
-        <div class="contact-item-icon">📞</div>
-        <div>
-          <div class="contact-item-label">Phone</div>
-          <div class="contact-item-value"><a href="tel:0448718672" style="color:var(--gold);text-decoration:none">044 871 8672</a></div>
-        </div>
-      </div>
-
-      <div class="contact-item">
-        <div class="contact-item-icon">💳</div>
-        <div>
-          <div class="contact-item-label">Price Range</div>
-          <div class="contact-item-value">R100 – R300 per person</div>
-        </div>
-      </div>
-    </div>
-
-    <a href="https://maps.google.com/?q=45+Wellington+St,+Bodorp,+George,+6529" target="_blank" class="btn-primary" style="display:inline-flex">
-      <span>Get Directions</span><span>↗</span>
+    <a href="#featured-dishes" class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+      <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+      </svg>
     </a>
-  </div>
+  </section>
 
-  <div class="map-placeholder fade-in" style="transition-delay:0.15s">
-    <div class="map-pin">📍</div>
-    <p>45 Wellington Street<br>Bodorp, George</p>
-    <a href="https://maps.google.com/?q=45+Wellington+St,+Bodorp,+George,+6529" target="_blank">Open in Google Maps ↗</a>
-  </div>
-</section>
+  <!-- ========== FEATURED DISHES ========== -->
+  <section id="featured-dishes" class="bg-[var(--light-background-color)] py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <span class="inline-block bg-[var(--primary-color)]/10 text-[var(--primary-color)] px-4 py-2 rounded-full text-sm font-semibold mb-4">Our Specialties</span>
+        <h2 class="text-4xl lg:text-5xl font-bold text-[var(--dark-text-color)] mb-4">Featured Dishes</h2>
+        <p class="text-xl text-[var(--gray-text-color)] max-w-2xl mx-auto">Handcrafted dishes made with authentic ingredients and traditional recipes</p>
+      </div>
 
-<!-- FOOTER -->
-<footer>
-  <div class="logo-area">
-    <span class="kanji">亜</span>
-    <span class="tagline">Asian Supermarket · George</span>
-  </div>
-  <div class="copy">
-    © 2025 Asian Supermarket George<br>
-    <span style="color:#3a3a3a">45 Wellington St, Bodorp · 044 871 8672</span>
-  </div>
-  <ul class="footer-links">
-    <li><a href="#menu">Menu</a></li>
-    <li><a href="#reviews">Reviews</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
-</footer>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Tom Yum Soup -->
+        <div class="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+          <div class="relative overflow-hidden">
+            <img src="https://assets.ls-assets.com/provider/istock/2240219035.jpg?w=768" alt="Tom Yum Soup" class="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-700">
+            <div class="absolute top-4 right-4 bg-[var(--accent-color)] text-[var(--dark-text-color)] px-3 py-1 rounded-full text-sm font-bold">Popular</div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-xl font-bold text-[var(--dark-text-color)]">Tom Yum Soup</h3>
+              <span class="text-[var(--primary-color)] font-bold text-lg">$12.99</span>
+            </div>
+            <p class="text-[var(--gray-text-color)] mb-4">Spicy and sour Thai soup with shrimp, mushrooms, and aromatic herbs</p>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1">
+                <span class="text-[var(--accent-color)]">★★★★★</span>
+                <span class="text-[var(--gray-text-color)] text-sm">4.9 (230)</span>
+              </div>
+              <span class="bg-red-100 text-[var(--primary-color)] text-xs px-2 py-1 rounded-full">🌶️ Spicy</span>
+            </div>
+          </div>
+        </div>
 
-<script>
-  // Scroll-triggered fade animations
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
+        <!-- Pepper Steak -->
+        <div class="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+          <div class="relative overflow-hidden">
+            <img src="https://assets.ls-assets.com/provider/istock/2264934195.jpg?w=768" alt="Pepper Steak" class="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-700">
+            <div class="absolute top-4 right-4 bg-[var(--accent2-color)] text-white px-3 py-1 rounded-full text-sm font-bold">Chef's Choice</div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-xl font-bold text-[var(--dark-text-color)]">Pepper Steak</h3>
+              <span class="text-[var(--primary-color)] font-bold text-lg">$16.99</span>
+            </div>
+            <p class="text-[var(--gray-text-color)] mb-4">Tender beef strips with bell peppers and sesame in savory sauce</p>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1">
+                <span class="text-[var(--accent-color)]">★★★★★</span>
+                <span class="text-[var(--gray-text-color)] text-sm">4.8 (185)</span>
+              </div>
+              <span class="bg-green-100 text-[var(--accent2-color)] text-xs px-2 py-1 rounded-full">⭐ Signature</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sweet & Sour Pork -->
+        <div class="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+          <div class="relative overflow-hidden">
+            <img src="https://assets.ls-assets.com/provider/istock/2227706236.jpg?w=768" alt="Sweet & Sour Pork" class="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-700">
+          </div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-xl font-bold text-[var(--dark-text-color)]">Sweet & Sour Pork</h3>
+              <span class="text-[var(--primary-color)] font-bold text-lg">$14.99</span>
+            </div>
+            <p class="text-[var(--gray-text-color)] mb-4">Crispy pork chops in tangy-sweet sauce with fresh pineapple</p>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1">
+                <span class="text-[var(--accent-color)]">★★★★★</span>
+                <span class="text-[var(--gray-text-color)] text-sm">4.7 (156)</span>
+              </div>
+              <span class="bg-yellow-100 text-[var(--accent-color)] text-xs px-2 py-1 rounded-full">🍖 Classic</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-12">
+        <a href="/restaurant-menu" class="inline-flex items-center bg-[var(--secondary-button-bg-color)] text-white px-8 py-4 rounded-lg font-semibold hover:bg-[var(--secondary-button-hover-bg-color)] transition-all duration-300 shadow-lg hover:shadow-xl">
+          <span>View Full Menu</span>
+          <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SUPERMARKET SECTION ========== -->
+  <section class="bg-[var(--dark-background-color)] py-20 relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-1/2 h-full opacity-10">
+      <img src="https://assets.ls-assets.com/provider/istock/1289339185.jpg?w=1200" alt="" class="w-full h-full object-cover">
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <div>
+          <span class="inline-block bg-[var(--accent-color)]/20 text-[var(--accent-color)] px-4 py-2 rounded-full text-sm font-semibold mb-6">Fresh & Authentic</span>
+          <h2 class="text-4xl lg:text-5xl font-bold text-white mb-6">
+            Asian Supermarket <br><span class="text-[var(--accent-color)]">Premium Selection</span>
+          </h2>
+          <p class="text-xl text-gray-300 mb-8 leading-relaxed">
+            Discover our extensive collection of authentic Asian ingredients, from fresh produce to specialty sauces and imported snacks from Japan, Korea, Thailand, China, Vietnam, and more.
+          </p>
+
+          <div class="grid grid-cols-2 gap-6 mb-8">
+            <div class="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+              <div class="w-12 h-12 bg-[var(--primary-color)] rounded-lg flex items-center justify-center mb-3">
+                <span class="text-2xl">🥬</span>
+              </div>
+              <h4 class="text-white font-semibold mb-1">Fresh Produce</h4>
+              <p class="text-gray-400 text-sm">Asian vegetables & herbs daily</p>
+            </div>
+            <div class="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+              <div class="w-12 h-12 bg-[var(--accent2-color)] rounded-lg flex items-center justify-center mb-3">
+                <span class="text-2xl">🐟</span>
+              </div>
+              <h4 class="text-white font-semibold mb-1">Fresh Seafood</h4>
+              <p class="text-gray-400 text-sm">Daily catch & frozen options</p>
+            </div>
+            <div class="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+              <div class="w-12 h-12 bg-[var(--accent-color)] rounded-lg flex items-center justify-center mb-3">
+                <span class="text-2xl">🍜</span>
+              </div>
+              <h4 class="text-white font-semibold mb-1">Noodles & Rice</h4>
+              <p class="text-gray-400 text-sm">Premium imported varieties</p>
+            </div>
+            <div class="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+              <div class="w-12 h-12 bg-[var(--accent3-color)] rounded-lg flex items-center justify-center mb-3">
+                <span class="text-2xl">🥫</span>
+              </div>
+              <h4 class="text-white font-semibold mb-1">Sauces & Condiments</h4>
+              <p class="text-gray-400 text-sm">Authentic Asian flavors</p>
+            </div>
+          </div>
+
+          <a href="/supermarket" class="inline-flex items-center bg-[var(--primary-color)] text-white px-8 py-4 rounded-lg font-semibold hover:bg-[var(--primary-button-hover-bg-color)] transition-all duration-300 shadow-lg hover:shadow-xl">
+            <span>Explore Products</span>
+            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+            </svg>
+          </a>
+        </div>
+
+        <div class="relative">
+          <div class="grid grid-cols-2 gap-4">
+            <img src="https://assets.ls-assets.com/provider/istock/1285628133.jpg?w=768" alt="Fresh noodles" class="rounded-2xl shadow-2xl w-full h-64 object-cover">
+            <img src="https://assets.ls-assets.com/provider/istock/2215696464.jpg?w=768" alt="Papaya salad" class="rounded-2xl shadow-2xl w-full h-64 object-cover mt-8">
+          </div>
+          <div class="absolute -bottom-6 -left-6 bg-[var(--accent-color)] rounded-2xl p-6 shadow-2xl">
+            <p class="text-4xl font-bold text-[var(--dark-text-color)]">500+</p>
+            <p class="text-[var(--dark-text-color)] font-medium">Products Available</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== WEEKLY SPECIALS ========== -->
+  <section class="bg-gradient-to-r from-[var(--primary-color)] to-[var(--primary-button-hover-bg-color)] py-20 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+      <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <defs>
+          <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+            <circle cx="1" cy="1" r="1" fill="white"></circle>
+          </pattern>
+        </defs>
+        <rect width="100" height="100" fill="url(#grid)"></rect>
+      </svg>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+      <div class="text-center mb-12">
+        <span class="inline-block bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold mb-4">Limited Time Offers</span>
+        <h2 class="text-4xl lg:text-5xl font-bold text-white mb-4">Weekly Specials</h2>
+        <p class="text-xl text-white/80 max-w-2xl mx-auto">Don't miss out on our exclusive weekly deals and seasonal promotions</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Noodle Tuesdays -->
+        <div class="bg-white rounded-2xl p-6 shadow-xl transform hover:-translate-y-2 transition-all duration-300">
+          <div class="flex items-center justify-between mb-4">
+            <span class="bg-[var(--accent3-color)] text-white px-3 py-1 rounded-full text-sm font-bold">20% OFF</span>
+            <span class="text-[var(--gray-text-color)] text-sm">Mon - Wed</span>
+          </div>
+          <h3 class="text-xl font-bold text-[var(--dark-text-color)] mb-2">Noodle Tuesdays</h3>
+          <p class="text-[var(--gray-text-color)] mb-4">Get 20% off all noodle dishes every Tuesday!</p>
+          <a href="/specials" class="text-[var(--primary-color)] font-semibold hover:underline inline-flex items-center">
+            Learn More
+            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </a>
+        </div>
+
+        <!-- Free Delivery -->
+        <div class="bg-white rounded-2xl p-6 shadow-xl transform hover:-translate-y-2 transition-all duration-300">
+          <div class="flex items-center justify-between mb-4">
+            <span class="bg-[var(--accent2-color)] text-white px-3 py-1 rounded-full text-sm font-bold">FREE Delivery</span>
+            <span class="text-[var(--gray-text-color)] text-sm">Orders $50+</span>
+          </div>
+          <h3 class="text-xl font-bold text-[var(--dark-text-color)] mb-2">Free Delivery Fridays</h3>
+          <p class="text-[var(--gray-text-color)] mb-4">Free delivery on all orders over $50 every Friday!</p>
+          <a href="/specials" class="text-[var(--primary-color)] font-semibold hover:underline inline-flex items-center">
+            Learn More
+            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </a>
+        </div>
+
+        <!-- Lunch Combo -->
+        <div class="bg-white rounded-2xl p-6 shadow-xl transform hover:-translate-y-2 transition-all duration-300">
+          <div class="flex items-center justify-between mb-4">
+            <span class="bg-[var(--accent-color)] text-[var(--dark-text-color)] px-3 py-1 rounded-full text-sm font-bold">Combo Deal</span>
+            <span class="text-[var(--gray-text-color)] text-sm">Daily</span>
+          </div>
+          <h3 class="text-xl font-bold text-[var(--dark-text-color)] mb-2">Lunch Combo</h3>
+          <p class="text-[var(--gray-text-color)] mb-4">Main dish + Soup + Drink for just $15.99!</p>
+          <a href="/specials" class="text-[var(--primary-color)] font-semibold hover:underline inline-flex items-center">
+            Learn More
+            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="text-center mt-12">
+        <a href="/specials" class="inline-flex items-center bg-white text-[var(--primary-color)] px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl">
+          <span>View All Specials</span>
+          <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CATERING SECTION ========== -->
+  <section class="bg-[var(--medium-background-color)] py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <div class="order-2 lg:order-1 relative">
+          <img src="https://assets.ls-assets.com/provider/istock/1289344461.jpg?w=1200" alt="Family cooking together" class="rounded-2xl shadow-2xl w-full h-[500px] object-cover">
+          <div class="absolute -bottom-6 -right-6 bg-[var(--primary-color)] text-white rounded-2xl p-6 shadow-2xl max-w-xs">
+            <p class="text-lg font-bold mb-2">Perfect for Any Event</p>
+            <p class="text-white/90 text-sm">From intimate gatherings to large celebrations</p>
+          </div>
+        </div>
+
+        <div class="order-1 lg:order-2">
+          <span class="inline-block bg-[var(--primary-color)]/10 text-[var(--primary-color)] px-4 py-2 rounded-full text-sm font-semibold mb-6">Events & Catering</span>
+          <h2 class="text-4xl lg:text-5xl font-bold text-[var(--dark-text-color)] mb-6">
+            Let Us Cater Your <span class="text-[var(--primary-color)]">Special Event</span>
+          </h2>
+          <p class="text-xl text-[var(--gray-text-color)] mb-8 leading-relaxed">
+            Make your next celebration memorable with our authentic Asian cuisine catering services. Perfect for corporate events, birthday parties, weddings, and family gatherings.
+          </p>
+
+          <div class="space-y-4 mb-8">
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 bg-[var(--accent-color)] rounded-full flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <div>
+                <h4 class="font-semibold text-[var(--dark-text-color)]">Customizable Menus</h4>
+                <p class="text-[var(--gray-text-color)]">Choose from our curated packages or create your own menu</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 bg-[var(--accent2-color)] rounded-full flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <div>
+                <h4 class="font-semibold text-[var(--dark-text-color)]">Professional Service</h4>
+                <p class="text-[var(--gray-text-color)]">Experienced staff to serve and set up your event</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 bg-[var(--accent3-color)] rounded-full flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <div>
+                <h4 class="font-semibold text-[var(--dark-text-color)]">Flexible Minimums</h4>
+                <p class="text-[var(--gray-text-color)]">Events from 10 to 500+ guests welcome</p>
+              </div>
+            </div>
+          </div>
+
+          <a href="/catering" class="inline-flex items-center bg-[var(--primary-color)] text-white px-8 py-4 rounded-lg font-semibold hover:bg-[var(--primary-button-hover-bg-color)] transition-all duration-300 shadow-lg hover:shadow-xl">
+            <span>Get a Quote</span>
+            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CTA SECTION ========== -->
+  <section class="bg-[var(--dark-background-color)] py-20 relative overflow-hidden">
+    <div class="absolute inset-0">
+      <img src="https://assets.ls-assets.com/provider/istock/2254332300.jpg?w=1920" alt="Restaurant interior" class="w-full h-full object-cover opacity-30">
+      <div class="absolute inset-0 bg-gradient-to-r from-[var(--dark-background-color)]/95 via-[var(--dark-background-color)]/90 to-[var(--dark-background-color)]/95"></div>
+    </div>
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
+      <h2 class="text-4xl lg:text-5xl font-bold text-white mb-6">Ready to Experience Authentic Asian Cuisine?</h2>
+      <p class="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
+        Order online for pickup or delivery, or visit us to explore our supermarket and enjoy our restaurant's fresh, flavorful dishes.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/order-online" class="inline-flex items-center justify-center bg-[var(--primary-color)] text-white px-10 py-5 rounded-lg font-bold text-lg hover:bg-[var(--primary-button-hover-bg-color)] transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1">
+          <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+          </svg>
+          <span>Order Online Now</span>
+        </a>
+        <a href="/location" class="inline-flex items-center justify-center bg-white/10 backdrop-blur-sm text-white border-2 border-white/30 px-10 py-5 rounded-lg font-bold text-lg hover:bg-white/20 transition-all duration-300">
+          <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+          <span>Find Us</span>
+        </a>
+      </div>
+
+      <div class="mt-12 flex flex-wrap justify-center gap-8">
+        <div class="flex items-center gap-2 text-gray-300">
+          <svg class="w-5 h-5 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span>Open 7 Days a Week</span>
+        </div>
+        <div class="flex items-center gap-2 text-gray-300">
+          <svg class="w-5 h-5 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+          </svg>
+          <span>Call for Reservations</span>
+        </div>
+        <div class="flex items-center gap-2 text-gray-300">
+          <svg class="w-5 h-5 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+          </svg>
+          <span>Pickup & Delivery Available</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="bg-[var(--dark-background-color)] text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
+        <!-- Column 1: Logo & Description -->
+        <div>
+          <a href="/" class="inline-block mb-6" data-logo="">
+            <img src="https://assets.ls-assets.com/uploads/616e1aa4-18d3-4015-bdb5-5b4943110f90/26b53c06-e786-4712-a3a6-74d2eb322890.png?w=768" alt="Asian Supermarket" class="h-14 w-auto">
+          </a>
+          <p class="text-gray-400 mb-6">Your destination for authentic Asian groceries and delicious homemade cuisine. Fresh ingredients, traditional recipes, unforgettable flavors.</p>
+          <div class="flex gap-4">
+            <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[var(--primary-color)] transition-colors">
+              <i class="fa-brands fa-facebook-f"></i>
+            </a>
+            <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[var(--primary-color)] transition-colors">
+              <i class="fa-brands fa-instagram"></i>
+            </a>
+            <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[var(--primary-color)] transition-colors">
+              <i class="fa-brands fa-twitter"></i>
+            </a>
+            <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[var(--primary-color)] transition-colors">
+              <i class="fa-brands fa-tiktok"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Column 2: Quick Links -->
+        <div>
+          <h4 class="text-lg font-bold mb-6">Quick Links</h4>
+          <ul class="space-y-3">
+            <li><a href="/restaurant-menu" class="text-gray-400 hover:text-[var(--accent-color)] transition-colors">Restaurant Menu</a></li>
+            <li><a href="/supermarket" class="text-gray-400 hover:text-[var(--accent-color)] transition-colors">Supermarket</a></li>
+            <li><a href="/specials" class="text-gray-400 hover:text-[var(--accent-color)] transition-colors">Weekly Specials</a></li>
+            <li><a href="/catering" class="text-gray-400 hover:text-[var(--accent-color)] transition-colors">Catering Services</a></li>
+            <li><a href="/order-online" class="text-gray-400 hover:text-[var(--accent-color)] transition-colors">Order Online</a></li>
+          </ul>
+        </div>
+
+        <!-- Column 3: Information -->
+        <div>
+          <h4 class="text-lg font-bold mb-6">Information</h4>
+          <ul class="space-y-3">
+            <li><a href="/about" class="text-gray-400 hover:text-[var(--accent-color)] transition-colors">About Us</a></li>
+            <li><a href="/location" class="text-gray-400 hover:text-[var(--accent-color)] transition-colors">Location & Hours</a></li>
+            <li><a href="/events" class="text-gray-400 hover:text-[var(--accent-color)] transition-colors">Events</a></li>
+            <li><a href="/gallery" class="text-gray-400 hover:text-[var(--accent-color)] transition-colors">Gallery</a></li>
+            <li><a href="/faq" class="text-gray-400 hover:text-[var(--accent-color)] transition-colors">FAQ</a></li>
+          </ul>
+        </div>
+
+        <!-- Column 4: Contact -->
+        <div>
+          <h4 class="text-lg font-bold mb-6">Contact Us</h4>
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-[var(--accent-color)] mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+              <span class="text-gray-400">123 Asian Market Street<br>City, State 12345</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-[var(--accent-color)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+              </svg>
+              <span class="text-gray-400">(555) 123-4567</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-[var(--accent-color)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+              </svg>
+              <span class="text-gray-400">info@asiansupermarket.com</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="border-t border-white/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <p class="text-gray-500 text-sm">© 2026 Asian Supermarket. All rights reserved.</p>
+        <div class="flex gap-6">
+          <a href="/contact" class="text-gray-500 hover:text-[var(--accent-color)] transition-colors text-sm">Contact Us</a>
+          <a href="#" class="text-gray-500 hover:text-[var(--accent-color)] transition-colors text-sm">Privacy Policy</a>
+          <a href="#" class="text-gray-500 hover:text-[var(--accent-color)] transition-colors text-sm">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========== MOBILE MENU SCRIPT ========== -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const menuToggle = document.querySelector('[data-landingsite-mobile-menu-toggle]');
+      const mobileMenu = document.querySelector('[data-landingsite-mobile-menu]');
+      
+      if (menuToggle && mobileMenu) {
+        menuToggle.addEventListener('click', function() {
+          mobileMenu.classList.toggle('hidden');
+        });
       }
     });
-  }, { threshold: 0.12 });
-
-  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-  // Smooth nav underline on scroll
-  window.addEventListener('scroll', () => {
-    const nav = document.querySelector('nav');
-    if (window.scrollY > 60) {
-      nav.style.background = 'rgba(10,10,10,0.97)';
-      nav.style.backdropFilter = 'blur(12px)';
-      nav.style.borderBottom = '1px solid rgba(201,168,76,0.1)';
-    } else {
-      nav.style.background = 'linear-gradient(to bottom, rgba(10,10,10,0.95), transparent)';
-      nav.style.backdropFilter = 'blur(2px)';
-      nav.style.borderBottom = 'none';
-    }
-  });
-</script>
+  </script>
 
 </body>
 </html>
