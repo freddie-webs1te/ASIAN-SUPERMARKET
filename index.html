@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asian Supermarket George</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=Noto+Serif+JP:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --red: #c8293a;
+    --red-dark: #8b1a27;
+    --cream: #f5f0e8;
+    --warm-white: #faf8f4;
+    --gold: #c9a84c;
+    --gold-light: #e8c96e;
+    --text-muted: #7a7068;
+    --border: rgba(201,168,76,0.25);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ─── NOISE TEXTURE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.6;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 4rem;
+    background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent);
+    backdrop-filter: blur(2px);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .nav-logo .kanji {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.6rem;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .nav-logo .brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cream);
+    line-height: 1.2;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    text-decoration: none;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.65);
+    transition: color 0.3s;
+  }
+
+  .nav-links a:hover { color: var(--gold-light); }
+
+  .nav-cta {
+    background: var(--red);
+    color: white;
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.65rem 1.5rem;
+    border: 1px solid var(--red);
+    transition: all 0.3s;
+  }
+
+  .nav-cta:hover {
+    background: transparent;
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg-strip {
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 52%;
+    background: linear-gradient(135deg, #1a0a0d 0%, #2d0f14 40%, #1a0508 100%);
+    clip-path: polygon(8% 0, 100% 0, 100% 100%, 0% 100%);
+  }
+
+  /* Decorative circle */
+  .hero-circle {
+    position: absolute;
+    right: 18%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 520px;
+    height: 520px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, #3d0f16, #1a0508);
+    border: 1px solid rgba(201,168,76,0.2);
+    box-shadow: 0 0 120px rgba(200,41,58,0.12), inset 0 0 80px rgba(0,0,0,0.5);
+  }
+
+  .hero-circle::before {
+    content: '';
+    position: absolute;
+    inset: 20px;
+    border-radius: 50%;
+    border: 1px solid rgba(201,168,76,0.12);
+  }
+
+  .hero-circle::after {
+    content: '';
+    position: absolute;
+    inset: 40px;
+    border-radius: 50%;
+    border: 1px dashed rgba(201,168,76,0.08);
+  }
+
+  .hero-food-img {
+    position: absolute;
+    right: 8%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 460px;
+    height: 460px;
+    border-radius: 50%;
+    object-fit: cover;
+    filter: saturate(1.1) contrast(1.05);
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(-50%) translateY(0); }
+    50% { transform: translateY(-50%) translateY(-14px); }
+  }
+
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 3rem 4rem 4rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.8rem;
+  }
+
+  .hero-tag .line {
+    width: 32px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .hero-tag span {
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 500;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.5rem, 5.5vw, 6.5rem);
+    line-height: 0.95;
+    font-weight: 900;
+    margin-bottom: 1.2rem;
+    letter-spacing: -0.02em;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--red);
+    display: block;
+  }
+
+  .hero h1 .outline {
+    -webkit-text-stroke: 1.5px var(--cream);
+    color: transparent;
+    display: block;
+  }
+
+  .hero-kanji-deco {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 5rem;
+    color: rgba(201,168,76,0.08);
+    position: absolute;
+    right: 55%;
+    top: 20%;
+    writing-mode: vertical-rl;
+    letter-spacing: 0.3em;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .hero-desc {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(245,240,232,0.65);
+    max-width: 380px;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--red);
+    color: white;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 1rem 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s;
+  }
+
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--red-dark);
+    transform: translateX(-101%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-primary:hover::before { transform: translateX(0); }
+  .btn-primary:hover { transform: translateY(-2px); }
+  .btn-primary span { position: relative; z-index: 1; }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--cream);
+    text-decoration: none;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(245,240,232,0.3);
+    padding-bottom: 2px;
+    transition: border-color 0.3s, color 0.3s;
+  }
+
+  .btn-ghost:hover { color: var(--gold); border-color: var(--gold); }
+
+  .hero-stats {
+    display: flex;
+    gap: 2.5rem;
+  }
+
+  .stat-item {}
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+  }
+
+  .hero-badge {
+    position: absolute;
+    right: 54%;
+    bottom: 15%;
+    background: rgba(10,10,10,0.9);
+    border: 1px solid var(--border);
+    padding: 1rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    backdrop-filter: blur(10px);
+    animation: fadeSlideUp 1s ease 0.8s both;
+  }
+
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .badge-stars {
+    color: var(--gold);
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+  }
+
+  .badge-text .top { font-size: 0.75rem; color: var(--gold); font-weight: 500; }
+  .badge-text .bot { font-size: 0.65rem; color: var(--text-muted); letter-spacing: 0.1em; }
+
+  /* ─── MARQUEE ─── */
+  .marquee-wrap {
+    background: var(--red);
+    padding: 0.8rem 0;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .marquee-track {
+    display: flex;
+    gap: 0;
+    animation: marquee 22s linear infinite;
+    white-space: nowrap;
+  }
+
+  .marquee-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0 2rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: rgba(255,255,255,0.9);
+  }
+
+  .marquee-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    display: inline-block;
+  }
+
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ─── MENU SECTION ─── */
+  .section {
+    padding: 7rem 4rem;
+    position: relative;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 4rem;
+  }
+
+  .section-tag {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .section-tag .line { width: 24px; height: 1px; background: var(--gold); }
+  .section-tag span {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
+  .section-title em { font-style: italic; color: var(--red); }
+
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px;
+    background: var(--border);
+  }
+
+  .menu-card {
+    background: #0f0f0f;
+    padding: 2.5rem 2rem;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: background 0.4s;
+  }
+
+  .menu-card:hover { background: #141010; }
+
+  .menu-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--red);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .menu-card:hover::before { transform: scaleX(1); }
+
+  .menu-card-emoji {
+    font-size: 3rem;
+    margin-bottom: 1.2rem;
+    display: block;
+  }
+
+  .menu-card-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .menu-card-desc {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+    margin-bottom: 1.5rem;
+  }
+
+  .menu-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .menu-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  .menu-price small {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .menu-arrow {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    font-size: 1rem;
+    transition: all 0.3s;
+  }
+
+  .menu-card:hover .menu-arrow {
+    background: var(--red);
+    border-color: var(--red);
+    color: white;
+  }
+
+  /* ─── ABOUT / VIBE SECTION ─── */
+  .about-section {
+    padding: 7rem 4rem;
+    background: linear-gradient(135deg, #0d0508 0%, #0a0a0a 60%);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+
+  .about-img-stack {
+    position: relative;
+    height: 520px;
+  }
+
+  .about-img-main {
+    position: absolute;
+    top: 0; left: 0;
+    width: 80%;
+    height: 80%;
+    background: linear-gradient(135deg, #2d0f14, #1a0508);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8rem;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .about-img-accent {
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 55%;
+    height: 55%;
+    background: #111;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 5rem;
+    padding: 1.5rem;
+  }
+
+  .about-label {
+    position: absolute;
+    top: 78%;
+    left: 2%;
+    background: var(--red);
+    padding: 0.6rem 1rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .about-text h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 3vw, 3rem);
+    line-height: 1.1;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+  }
+
+  .about-text h2 em { font-style: italic; color: var(--red); }
+
+  .about-text p {
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: rgba(245,240,232,0.65);
+    margin-bottom: 1.2rem;
+  }
+
+  .about-features {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .feature-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    transition: border-color 0.3s;
+  }
+
+  .feature-row:hover { border-color: rgba(201,168,76,0.5); }
+
+  .feature-icon {
+    font-size: 1.4rem;
+    width: 42px;
+    text-align: center;
+  }
+
+  .feature-info strong {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 0.2rem;
+  }
+
+  .feature-info span {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  /* ─── REVIEWS ─── */
+  .reviews-section {
+    padding: 7rem 4rem;
+    background: #080808;
+  }
+
+  .reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    margin-top: 4rem;
+  }
+
+  .review-card {
+    background: #0a0a0a;
+    padding: 2rem;
+    position: relative;
+  }
+
+  .review-card::before {
+    content: '"';
+    font-family: 'Playfair Display', serif;
+    font-size: 6rem;
+    line-height: 1;
+    color: var(--red);
+    opacity: 0.12;
+    position: absolute;
+    top: 0.5rem;
+    left: 1.5rem;
+    font-style: italic;
+  }
+
+  .review-stars {
+    color: var(--gold);
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    margin-bottom: 1rem;
+  }
+
+  .review-text {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: rgba(245,240,232,0.8);
+    margin-bottom: 1.5rem;
+    font-style: italic;
+    font-family: 'Playfair Display', serif;
+    font-weight: 400;
+  }
+
+  .reviewer {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+  }
+
+  .reviewer-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--red-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .reviewer-name {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--cream);
+  }
+
+  .reviewer-meta {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    margin-top: 0.15rem;
+  }
+
+  /* ─── CONTACT ─── */
+  .contact-section {
+    padding: 7rem 4rem;
+    background: linear-gradient(180deg, #0a0a0a 0%, #0d0508 100%);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+
+  .contact-info h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 3.5vw, 3.2rem);
+    line-height: 1.1;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    margin-bottom: 2rem;
+  }
+
+  .contact-info h2 em { color: var(--red); font-style: italic; }
+
+  .contact-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .contact-item {
+    display: flex;
+    gap: 1.2rem;
+    align-items: flex-start;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .contact-item:last-child { border: none; }
+
+  .contact-item-icon {
+    font-size: 1.2rem;
+    margin-top: 0.1rem;
+    flex-shrink: 0;
+  }
+
+  .contact-item-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.3rem;
+  }
+
+  .contact-item-value {
+    font-size: 0.92rem;
+    color: var(--cream);
+    line-height: 1.5;
+  }
+
+  .map-placeholder {
+    height: 420px;
+    background: #0f0a0c;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .map-placeholder::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(201,168,76,0.04) 39px, rgba(201,168,76,0.04) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(201,168,76,0.04) 39px, rgba(201,168,76,0.04) 40px);
+  }
+
+  .map-pin {
+    font-size: 3rem;
+    animation: pulse 2.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+
+  .map-placeholder p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-align: center;
+  }
+
+  .map-placeholder a {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--red);
+    text-decoration: none;
+    border-bottom: 1px solid var(--red);
+    padding-bottom: 2px;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: #050505;
+    padding: 3rem 4rem 2rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  footer .logo-area .kanji {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.8rem;
+    color: var(--gold);
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+
+  footer .logo-area .tagline {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  footer .copy {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  footer .footer-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  footer .footer-links a {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  footer .footer-links a:hover { color: var(--gold); }
+
+  /* ─── HOURS BADGE ─── */
+  .hours-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid rgba(100,200,100,0.3);
+    background: rgba(100,200,100,0.05);
+    border-radius: 2px;
+    margin-bottom: 1rem;
+  }
+
+  .hours-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #4caf50;
+    animation: blink 2s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .hours-badge span {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #4caf50;
+  }
+
+  /* ─── ANIMATIONS ─── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    nav { padding: 1.2rem 2rem; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-bg-strip { width: 100%; clip-path: none; opacity: 0.3; }
+    .hero-left { padding: 8rem 2rem 4rem; }
+    .hero-food-img { display: none; }
+    .hero-circle { display: none; }
+    .hero-kanji-deco { display: none; }
+    .section { padding: 4rem 2rem; }
+    .menu-grid { grid-template-columns: 1fr; }
+    .reviews-grid { grid-template-columns: 1fr; }
+    .about-section { grid-template-columns: 1fr; gap: 3rem; padding: 4rem 2rem; }
+    .contact-section { grid-template-columns: 1fr; gap: 3rem; padding: 4rem 2rem; }
+    footer { flex-direction: column; gap: 1.5rem; text-align: center; padding: 2rem; }
+    .hero-badge { display: none; }
+    .section-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <span class="kanji">亜</span>
+    <div class="brand">Asian<br>Supermarket</div>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#contact">Find Us</a></li>
+  </ul>
+  <a href="tel:0448718672" class="nav-cta">Call Us</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-strip"></div>
+  <div class="hero-circle"></div>
+
+  <!-- Floating sushi plate (emoji-based, no external image needed) -->
+  <div style="position:absolute;right:8%;top:50%;transform:translateY(-50%);width:460px;height:460px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#2d0f14,#0d0306);display:flex;align-items:center;justify-content:center;font-size:13rem;box-shadow:0 40px 100px rgba(200,41,58,0.15);animation:float 6s ease-in-out infinite;z-index:3;border:1px solid rgba(201,168,76,0.15);">🍣</div>
+
+  <div class="hero-left">
+    <div class="hours-badge">
+      <div class="hours-dot"></div>
+      <span>Open Now · Closes 8pm</span>
+    </div>
+
+    <div class="hero-tag">
+      <div class="line"></div>
+      <span>George, Western Cape</span>
+    </div>
+
+    <h1>
+      <span>Taste of</span>
+      <em>Asia</em>
+      <span class="outline">In George</span>
+    </h1>
+
+    <div class="hero-kanji-deco">亜細亜</div>
+
+    <p class="hero-desc">
+      Authentic sushi, fresh dim sum, hand-rolled dumplings & an entire world of Asian pantry staples — all under one roof in Bodorp.
+    </p>
+
+    <div class="hero-actions">
+      <a href="#menu" class="btn-primary"><span>Explore Menu</span><span>→</span></a>
+      <a href="#contact" class="btn-ghost">Find us ↗</a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">4.5★</div>
+        <div class="stat-label">Google Rating</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">500+</div>
+        <div class="stat-label">Reviews</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">R100</div>
+        <div class="stat-label">From Only</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-badge">
+    <div class="badge-stars">★★★★★</div>
+    <div class="badge-text">
+      <div class="top">Best Sushi in George</div>
+      <div class="bot">As rated by locals</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="marquee-item">Fresh Sushi Daily <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Dim Sum & Dumplings <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Asian Pantry Essentials <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Takeaway & Dine In <span class="marquee-dot"></span></span>
+    <span class="marquee-item">45 Wellington St, George <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Open Until 8pm Daily <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Fresh Sushi Daily <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Dim Sum & Dumplings <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Asian Pantry Essentials <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Takeaway & Dine In <span class="marquee-dot"></span></span>
+    <span class="marquee-item">45 Wellington St, George <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Open Until 8pm Daily <span class="marquee-dot"></span></span>
+  </div>
+</div>
+
+<!-- MENU -->
+<section class="section" id="menu">
+  <div class="section-header">
+    <div>
+      <div class="section-tag"><div class="line"></div><span>Our Specialties</span></div>
+      <h2 class="section-title">What We <em>Serve</em></h2>
+    </div>
+    <a href="#contact" class="btn-ghost">View Full Menu ↗</a>
+  </div>
+
+  <div class="menu-grid">
+    <div class="menu-card fade-in">
+      <span class="menu-card-emoji">🍣</span>
+      <h3 class="menu-card-name">Sushi & Rolls</h3>
+      <p class="menu-card-desc">Fresh, big-bite sushi rolls made daily. Our tempura prawn fashion sandwiches are crowd favourites. Best in George — locals agree.</p>
+      <div class="menu-card-footer">
+        <div class="menu-price">From R100 <small>/ combo</small></div>
+        <div class="menu-arrow">→</div>
+      </div>
+    </div>
+
+    <div class="menu-card fade-in" style="transition-delay:0.1s">
+      <span class="menu-card-emoji">🥟</span>
+      <h3 class="menu-card-name">Dim Sum & Dumplings</h3>
+      <p class="menu-card-desc">Steamed or fried, take them home or eat in. Best dim sum in town — and a huge variety of frozen dumplings to cook at home.</p>
+      <div class="menu-card-footer">
+        <div class="menu-price">From R80 <small>/ basket</small></div>
+        <div class="menu-arrow">→</div>
+      </div>
+    </div>
+
+    <div class="menu-card fade-in" style="transition-delay:0.2s">
+      <span class="menu-card-emoji">🍜</span>
+      <h3 class="menu-card-name">Noodles & Fried Rice</h3>
+      <p class="menu-card-desc">Hot, comforting takeaway at unbeatable prices. Fried rice, noodle dishes and more — great value for money every time.</p>
+      <div class="menu-card-footer">
+        <div class="menu-price">From R70 <small>/ plate</small></div>
+        <div class="menu-arrow">→</div>
+      </div>
+    </div>
+
+    <div class="menu-card fade-in" style="transition-delay:0.1s">
+      <span class="menu-card-emoji">🛒</span>
+      <h3 class="menu-card-name">Asian Grocery</h3>
+      <p class="menu-card-desc">Miss the flavours of SE Asia? Noodles, sauces, snacks, drinks and exotic pantry staples — everything you'd find in Bangkok's markets.</p>
+      <div class="menu-card-footer">
+        <div class="menu-price">Huge Range</div>
+        <div class="menu-arrow">→</div>
+      </div>
+    </div>
+
+    <div class="menu-card fade-in" style="transition-delay:0.2s">
+      <span class="menu-card-emoji">🍡</span>
+      <h3 class="menu-card-name">Snacks & Sweets</h3>
+      <p class="menu-card-desc">Unique Asian candies, mochi, pocky, chips and drinks you won't find anywhere else in the Garden Route. Perfect for gifting.</p>
+      <div class="menu-card-footer">
+        <div class="menu-price">From R15</div>
+        <div class="menu-arrow">→</div>
+      </div>
+    </div>
+
+    <div class="menu-card fade-in" style="transition-delay:0.3s">
+      <span class="menu-card-emoji">🎏</span>
+      <h3 class="menu-card-name">Asian Trinkets</h3>
+      <p class="menu-card-desc">Decor, kitchenware, chopsticks, and cultural gifts. A little treasure hunt every visit — something new always on the shelves.</p>
+      <div class="menu-card-footer">
+        <div class="menu-price">Various</div>
+        <div class="menu-arrow">→</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about-section" id="about">
+  <div class="about-img-stack fade-in">
+    <div class="about-img-main">🏮</div>
+    <div class="about-img-accent">🥢</div>
+    <div class="about-label">Hidden Gem · George</div>
+  </div>
+  <div class="about-text fade-in" style="transition-delay:0.15s">
+    <div class="section-tag"><div class="line"></div><span>Our Story</span></div>
+    <h2>A <em>Hidden Gem</em><br>in the Heart of George</h2>
+    <p>
+      Tucked away on Wellington Street in Bodorp, Asian Supermarket George is where the Garden Route goes to find something extraordinary. Whether you're a seasoned traveller missing the bold flavours of Southeast Asia or a curious first-timer, this is your destination.
+    </p>
+    <p>
+      From hand-made sushi to authentic imported pantry staples, every corner of our store is stocked with quality and passion. It's not just a supermarket — it's a taste journey.
+    </p>
+    <div class="about-features">
+      <div class="feature-row">
+        <div class="feature-icon">🍱</div>
+        <div class="feature-info">
+          <strong>Dine In & Takeaway</strong>
+          <span>Eat fresh on-site or grab quality meals to go</span>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">🌏</div>
+        <div class="feature-info">
+          <strong>Authentic Asian Imports</strong>
+          <span>Products sourced direct from Asia — the real deal</span>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">💛</div>
+        <div class="feature-info">
+          <strong>Friendly Staff & Great Prices</strong>
+          <span>Welcoming service and incredible value every visit</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="reviews-section" id="reviews">
+  <div class="section-header">
+    <div>
+      <div class="section-tag"><div class="line"></div><span>Google Reviews</span></div>
+      <h2 class="section-title">What George <em>Says</em></h2>
+    </div>
+    <div style="text-align:right">
+      <div style="font-family:'Playfair Display',serif;font-size:3rem;font-weight:900;color:var(--gold);line-height:1">4.5★</div>
+      <div style="font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-muted);margin-top:0.25rem">500+ Reviews</div>
+    </div>
+  </div>
+
+  <div class="reviews-grid">
+    <div class="review-card fade-in">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">Probably the best sushi in town. Was so surprised — and the combos are epic!</p>
+      <div class="reviewer">
+        <div class="reviewer-avatar">VM</div>
+        <div>
+          <div class="reviewer-name">Vilje Maritz</div>
+          <div class="reviewer-meta">Local Guide · 8 months ago</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="review-card fade-in" style="transition-delay:0.1s">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">A hidden gem! Excellent variety of authentic Asian ingredients at great prices. The staff are friendly and helpful. Highly recommended.</p>
+      <div class="reviewer">
+        <div class="reviewer-avatar">HC</div>
+        <div>
+          <div class="reviewer-name">Hendrik Combrinck</div>
+          <div class="reviewer-meta">Local Guide · 113 reviews · 3 months ago</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="review-card fade-in" style="transition-delay:0.2s">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">Best dim sum in town! Great food, very nice selection of Asian products. Would definitely go again!</p>
+      <div class="reviewer">
+        <div class="reviewer-avatar">MA</div>
+        <div>
+          <div class="reviewer-name">Melvin Alihusain</div>
+          <div class="reviewer-meta">5 reviews · 3 months ago</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="review-card fade-in">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">If you miss the food from SE Asia, it's all here. Great place for noodles, sweets and food. Takeout menu is cheap and great value.</p>
+      <div class="reviewer">
+        <div class="reviewer-avatar">JV</div>
+        <div>
+          <div class="reviewer-name">Johan Van Tonder</div>
+          <div class="reviewer-meta">Local Guide · 55 reviews · 4 months ago</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="review-card fade-in" style="transition-delay:0.1s">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">The best Asian market in George. Tons of dumplings to buy at home, lots of Asian snacks and drinks. I go here often and highly recommend it.</p>
+      <div class="reviewer">
+        <div class="reviewer-avatar">ML</div>
+        <div>
+          <div class="reviewer-name">M. Louw</div>
+          <div class="reviewer-meta">Local Guide · 31 reviews · 4 months ago</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="review-card fade-in" style="transition-delay:0.2s">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">Great, fresh sushi! Delicious tempura prawn fashion sandwiches! We will definitely be back soon!</p>
+      <div class="reviewer">
+        <div class="reviewer-avatar">HF</div>
+        <div>
+          <div class="reviewer-name">Heila Fourie</div>
+          <div class="reviewer-meta">Local Guide · 19 reviews · 2 months ago</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <div class="contact-info fade-in">
+    <div class="section-tag"><div class="line"></div><span>Visit Us</span></div>
+    <h2>Come <em>Find</em><br>Your Favourites</h2>
+
+    <div class="contact-details">
+      <div class="contact-item">
+        <div class="contact-item-icon">📍</div>
+        <div>
+          <div class="contact-item-label">Address</div>
+          <div class="contact-item-value">45 Wellington Street<br>Bodorp, George, 6529<br>Western Cape, South Africa</div>
+        </div>
+      </div>
+
+      <div class="contact-item">
+        <div class="contact-item-icon">🕐</div>
+        <div>
+          <div class="contact-item-label">Trading Hours</div>
+          <div class="contact-item-value">Monday – Sunday<br>6:00 AM – 8:00 PM</div>
+        </div>
+      </div>
+
+      <div class="contact-item">
+        <div class="contact-item-icon">📞</div>
+        <div>
+          <div class="contact-item-label">Phone</div>
+          <div class="contact-item-value"><a href="tel:0448718672" style="color:var(--gold);text-decoration:none">044 871 8672</a></div>
+        </div>
+      </div>
+
+      <div class="contact-item">
+        <div class="contact-item-icon">💳</div>
+        <div>
+          <div class="contact-item-label">Price Range</div>
+          <div class="contact-item-value">R100 – R300 per person</div>
+        </div>
+      </div>
+    </div>
+
+    <a href="https://maps.google.com/?q=45+Wellington+St,+Bodorp,+George,+6529" target="_blank" class="btn-primary" style="display:inline-flex">
+      <span>Get Directions</span><span>↗</span>
+    </a>
+  </div>
+
+  <div class="map-placeholder fade-in" style="transition-delay:0.15s">
+    <div class="map-pin">📍</div>
+    <p>45 Wellington Street<br>Bodorp, George</p>
+    <a href="https://maps.google.com/?q=45+Wellington+St,+Bodorp,+George,+6529" target="_blank">Open in Google Maps ↗</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo-area">
+    <span class="kanji">亜</span>
+    <span class="tagline">Asian Supermarket · George</span>
+  </div>
+  <div class="copy">
+    © 2025 Asian Supermarket George<br>
+    <span style="color:#3a3a3a">45 Wellington St, Bodorp · 044 871 8672</span>
+  </div>
+  <ul class="footer-links">
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</footer>
+
+<script>
+  // Scroll-triggered fade animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Smooth nav underline on scroll
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    if (window.scrollY > 60) {
+      nav.style.background = 'rgba(10,10,10,0.97)';
+      nav.style.backdropFilter = 'blur(12px)';
+      nav.style.borderBottom = '1px solid rgba(201,168,76,0.1)';
+    } else {
+      nav.style.background = 'linear-gradient(to bottom, rgba(10,10,10,0.95), transparent)';
+      nav.style.backdropFilter = 'blur(2px)';
+      nav.style.borderBottom = 'none';
+    }
+  });
+</script>
+
+</body>
+</html>
