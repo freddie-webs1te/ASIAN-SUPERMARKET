@@ -1,0 +1,27 @@
+:root {
+  --primary-color: #C41E3A;
+  --primary-button-text-color: #FFFFFF;
+  --primary-button-hover-bg-color: #A01830;
+  --primary-button-hover-text-color: #FFFFFF;
+  --secondary-button-bg-color: #2C3E50;
+  --secondary-button-text-color: #FFFFFF;
+  --secondary-button-hover-bg-color: #1A252F;
+  --secondary-button-hover-text-color: #FFFFFF;
+  --accent-color: #D4AF37;
+  --accent2-color: #00A878;
+  --accent3-color: #FF6B35;
+  --accent4-color: #4A5568;
+  --dark-text-color: #1A1A1A;
+  --gray-text-color: #6B7280;
+  --light-text-color: #FFFFFF;
+  --dark-border-color: #374151;
+  --light-border-color: #E5E7EB;
+  --dark-background-color: #1A1A1A;
+  --light-background-color: #FDF5F6;
+  --medium-background-color: #F9EBED;
+  --button-padding-x: 32px;
+  --button-padding-y: 14px;
+  --font-family-body: Outfit;
+  --font-family-heading: Urbanist;
+  --button-rounded-radius: 8px;
+}
